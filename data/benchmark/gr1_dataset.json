@@ -1,0 +1,482 @@
+[
+  {
+    "id": 1,
+    "question": "How does the retrieval mechanism in Retrieval-Augmented Generation (RAG) utilize vector databases like FAISS, and what types of indexing methods does FAISS support for similarity searches?",
+    "answer": "RAG converts reference text data into embeddings stored in a vector database for similarity-based document retrieval relative to a query. FAISS supports indexing methods including brute-force search, inverted-lists based indices, graph indices (HNSW, NSG), and Locality-Sensitive Hashing (LSH).",
+    "entities": ["Retrieval-Augmented Generation", "FAISS", "vector database", "indexing methods", "similarity search"],
+    "type": "cross-doc",
+    "difficulty": "hard"
+  },
+  {
+    "id": 2,
+    "question": "What are the key architectural differences in how positional information is handled between BERT and LLaMA, and what activation function does LLaMA use instead of the one in GPT-3?",
+    "answer": "BERT uses absolute position embeddings mapping each sequence position to sinusoidal functions. LLaMA uses rotary positional embeddings (RoPE). LLaMA also uses the SwiGLU activation function instead of GPT-3's GeLU.",
+    "entities": ["BERT", "LLaMA", "GPT-3", "positional embeddings", "activation function", "SwiGLU", "GeLU", "RoPE"],
+    "type": "cross-doc",
+    "difficulty": "hard"
+  },
+  {
+    "id": 3,
+    "question": "How does the attention mechanism in Transformers differ from the gating mechanism in LSTMs in mitigating the limitations of standard RNNs on long sequences?",
+    "answer": "Standard RNNs sequentially propagate information, suffering from vanishing gradients. LSTMs use multiplicative gating to regulate sequential flow. Transformers replace recurrence entirely with parallel self-attention, giving all tokens direct, equal access to any part of the sequence regardless of position.",
+    "entities": ["attention mechanism", "Transformers", "gating mechanism", "LSTM", "RNN", "vanishing gradient"],
+    "type": "cross-doc",
+    "difficulty": "hard"
+  },
+  {
+    "id": 4,
+    "question": "Compare how semantic search systems and Retrieval-Augmented Generation (RAG) systems utilize vector embeddings to improve search accuracy and ground LLM outputs.",
+    "answer": "Semantic search maps queries and documents to vector embeddings to retrieve content based on contextual meaning rather than keywords. RAG embeds documents and queries to retrieve context to augment the LLM's prompt, grounding the generator's response and reducing hallucinations.",
+    "entities": ["semantic search", "Retrieval-Augmented Generation", "vector embeddings", "hallucinations", "information retrieval"],
+    "type": "cross-doc",
+    "difficulty": "medium"
+  },
+  {
+    "id": 5,
+    "question": "How does the generator-discriminator dynamic in Generative Adversarial Networks (GANs) compare to the student-teacher relationship in knowledge distillation models like DistilBERT?",
+    "answer": "GANs involve an adversarial zero-sum game where the generator attempts to fool the discriminator. Knowledge distillation in models like DistilBERT is cooperative, training a smaller student network to mimic the outputs and match the performance of a pre-trained larger teacher model.",
+    "entities": ["Generative Adversarial Networks", "knowledge distillation", "DistilBERT", "generator", "discriminator", "student-teacher"],
+    "type": "cross-doc",
+    "difficulty": "hard"
+  },
+  {
+    "id": 6,
+    "question": "Explain how the optimization objective in hard-margin Support Vector Machines (SVMs) differs from the loss function minimization in Logistic Regression, particularly regarding the types of loss used.",
+    "answer": "Hard-margin SVM minimizes the weight vector norm to maximize a geometric boundary margin under strict linear constraints. Logistic Regression minimizes log loss (cross-entropy), which is a smooth, unconstrained probabilistic function that penalizes incorrect class predictions without hard boundary constraints.",
+    "entities": ["Support Vector Machine", "Logistic Regression", "optimization objective", "loss function", "hard-margin", "log loss", "cross-entropy"],
+    "type": "cross-doc",
+    "difficulty": "hard"
+  },
+  {
+    "id": 7,
+    "question": "Why did HuggingFace remove the repositories containing Llama's weights on March 6, 2023, and what event triggered this removal request by Meta?",
+    "answer": "HuggingFace complied with DMCA takedown requests filed by Meta characterizing the weights as 'unauthorized distribution'. This was triggered by a leak on March 3, 2023, where a torrent of the weights was shared on 4chan and pull requests were opened to link them in the Llama documentation.",
+    "entities": ["LLaMA", "HuggingFace", "weights leak", "takedown requests", "Meta"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 8,
+    "question": "How does Llama 3's empirical scaling behavior on its 8B model contradict the dataset size predictions of the Chinchilla scaling law?",
+    "answer": "The Chinchilla scaling law predicts that the optimal dataset size for an 8B model is 200 billion tokens. Llama 3 contradicted this by continuing to scale log-linearly in performance up to 15 trillion tokens (75 times larger than the Chinchilla-optimal size).",
+    "entities": ["LLaMA 3", "scaling laws", "Chinchilla scaling", "8B model", "dataset size"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 9,
+    "question": "What was the primary motivation behind the development of the 'pre-LN Transformer' architecture, and how does it modify the training configuration compared to the original 'post-LN Transformer'?",
+    "answer": "The pre-LN Transformer was developed to stabilize training and eliminate the need for learning rate warmup. It places layer normalization before the multi-head attention and feedforward layers, whereas the original post-LN Transformer normalization was placed after those layers.",
+    "entities": ["pre-LN Transformer", "post-LN Transformer", "layer normalization", "learning rate warmup", "training stability"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 10,
+    "question": "In the context of BERT's masked language modeling, why is a selected token not replaced with [MASK] 100% of the time, and what problem does this design choice aim to prevent?",
+    "answer": "Tokens are masked 80% of the time, replaced with a random word 10% of the time, and left unchanged 10% of the time. This design prevents the dataset shift problem, where the input distribution during downstream task inference differs from training because [MASK] tokens never appear in downstream inference.",
+    "entities": ["BERT", "masked language modeling", "[MASK] token", "dataset shift", "inference distribution"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 11,
+    "question": "How does the 'Ghost attention' technique in Llama 2 improve multi-turn dialogue consistency, and what is zeroed out during this training process?",
+    "answer": "Ghost attention improves consistency by concatenating system instructions to each new user message in multi-turn dialogues. During training, the loss function is zeroed out for the tokens corresponding to the user prompts and earlier dialog turns, forcing the model to optimize only on current output generation.",
+    "entities": ["Ghost attention", "LLaMA 2", "multi-turn consistency", "system messages", "loss function"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 12,
+    "question": "Why does the unnormalized linear transformer share equivalence with the linearly scaling fast weight controller proposed in 1992?",
+    "answer": "The 1992 fast weight controller uses a slow network to generate keys and values to compute weight changes (fast weights) of a second network that computes answers to queries. This key, value, and query mapping matches the mathematical formulation of the unnormalized linear transformer.",
+    "entities": ["unnormalized linear transformer", "fast weight controller", "slow network", "fast weights", "keys and values"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 13,
+    "question": "Explain why BERT's bidirectional encoder architecture prevents it from performing naive autoregressive text generation, and how this relates to the dataset shift problem during sentence extension.",
+    "answer": "BERT has no decoder and requires right-side context. To extend a sentence fragment, one must mask all future positions, but this many-mask configuration constitutes a dataset shift because BERT has never seen that many masks during training, causing its performance to degrade.",
+    "entities": ["BERT", "bidirectional encoder", "autoregressive text generation", "dataset shift", "[MASK] token"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 14,
+    "question": "What was the primary finding of the 2023 study by DeepMind regarding the lossless compression capabilities of the Chinchilla model on non-text datasets?",
+    "answer": "DeepMind showed that the text-trained Chinchilla model was highly capable of lossless compression on non-text data, compressing ImageNet down to 43% of its original size, which outperformed the PNG image format's compression score of 58%.",
+    "entities": ["Chinchilla model", "DeepMind", "lossless compression", "ImageNet", "PNG"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 15,
+    "question": "In the context of LLMs, how does the Reflexion agentic framework differ from the DEPS (describe, explain, plan, select) method in incorporating feedback for future actions?",
+    "answer": "DEPS plans complex tasks based on visual image descriptions and immediate environmental feedback. Reflexion incorporates feedback across episodes by prompting the LLM at the end of each run to generate 'lessons learned' which are stored as long-term memory to guide actions in subsequent episodes.",
+    "entities": ["Reflexion", "DEPS", "agentic framework", "environmental feedback", "long-term memory"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 16,
+    "question": "Why does using the transpose of the embedding matrix as the un-embedding matrix (weight tying) benefit the training of a Transformer model?",
+    "answer": "Weight tying uses the transpose of the input embedding matrix as the output un-embedding matrix. This benefits training by eliminating the need to double the parameters for embeddings and preventing model numerical divergence during training.",
+    "entities": ["weight tying", "embedding matrix", "un-embedding matrix", "parameter count", "training divergence"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 17,
+    "question": "How does the 'late interaction' technique in RAG models improve search accuracy, and at what stage of the retrieval process does it operate?",
+    "answer": "Late interaction operates during similarity comparisons after initial retrieval. It improves search accuracy by enabling the system to compare words more precisely token-by-token, which refines document ranking and increases search relevance.",
+    "entities": ["late interaction", "retrieval process", "document ranking", "search relevance", "RAG"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 18,
+    "question": "Why is a strictly upper triangular matrix with negative infinity elements used as the attention mask ($M$) in autoregressive decoder models?",
+    "answer": "Applying negative infinity in elements above the diagonal ensures the softmax output is lower triangular (with zeros above the diagonal). This guarantees that the output of row $i$ is independent of future token representations in row $j > i$.",
+    "entities": ["attention mask", "autoregressive decoder", "softmax", "lower triangular", "upper triangular"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 19,
+    "question": "What is the 'Inverse Cloze Task' (ICT) in RAG retriever-centric methods, and what role does it play during training?",
+    "answer": "ICT is a pre-training technique where a retriever predicts a masked text span from its surrounding document context. This teaches the retriever model to learn matching semantic retrieval patterns between short query texts and parent documents.",
+    "entities": ["Inverse Cloze Task", "retriever-centric methods", "pre-training", "retrieval patterns", "RAG"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 20,
+    "question": "Explain how the 'Retro' language model architecture manages to achieve comparable perplexity to much larger networks while having a network size that is 25 times smaller.",
+    "answer": "Retro is trained from scratch with a retriever in-the-loop. By feeding external domain knowledge dynamically from a database during training, the model does not need to store factual data in its weights, allowing its smaller parameters to focus solely on language semantics.",
+    "entities": ["Retro", "perplexity", "network size", "retriever-in-the-loop", "language semantics"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 21,
+    "question": "Why did the Open Source Initiative (OSI) dispute Meta's characterization of Llama 2 as 'open-source', and what specific restrictions in Llama 2's license violate the Open Source Definition?",
+    "answer": "OSI disputed the label because the Llama 2 license discriminates against users and endeavors. Specifically, it prohibits commercial use for entities with over 700 million daily active users and restricts deployment in fields like controlled substances and critical infrastructure.",
+    "entities": ["Open Source Initiative", "LLaMA 2", "open-source definition", "commercial restrictions", "licensing"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 22,
+    "question": "What was the 'Llama 4 Maverick' benchmark controversy, and how did it prompt LMArena to modify its policies regarding model submissions?",
+    "answer": "Meta benchmarked Llama 4 Maverick on LMArena using an unreleased 'experimental chat version' optimized for preference. LMArena changed its policies to require model providers to make it clear if a benchmarked model is customized and differs from the public release version.",
+    "entities": ["LLaMA 4 Maverick", "LMArena", "benchmark controversy", "experimental chat version", "model submission policy"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 23,
+    "question": "In decision tree learning, how does the mathematical formulation of Gini impurity differ from Information Gain, and what entropy-based metric is used to compute the latter?",
+    "answer": "Gini impurity calculates $1 - \\sum p_i^2$, corresponding to Tsallis Entropy ($q=2$). Information Gain calculates the change in Shannon entropy (parent entropy minus child sum), where Shannon entropy is computed using $-\\sum p_i \\log_2 p_i$.",
+    "entities": ["Gini impurity", "Information Gain", "Shannon entropy", "decision tree learning", "Tsallis Entropy"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 24,
+    "question": "How does the `llama.cpp` library optimize matrix multiplication on x86 and ARM CPUs, and what binary file format does it use to store both tensors and metadata?",
+    "answer": "Through optimized matrix multiplication kernels (introduced in the llamafile project), it improves FP16 and 8-bit quantized prompt evaluation on CPUs. It uses the GGUF binary format to store both tensors and metadata.",
+    "entities": ["llama.cpp", "matrix multiplication", "GGUF format", "quantization", "CPU optimization"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 25,
+    "question": "What is the difference between static and dynamic quantization in LLMs, and why does dynamic quantization forgo the speed benefits of lower-precision arithmetic?",
+    "answer": "Static quantization determines parameters during a calibration phase before inference. Dynamic quantization applies parameters on the fly during inference. It forgoes speed benefits because it calculates a separate scale/bias or lookup codebook per layer dynamically during runtime.",
+    "entities": ["quantization", "static quantization", "dynamic quantization", "computational speed", "precision"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 26,
+    "question": "How does the 'grokking' phenomenon observed in training small transformers on modular arithmetic addition relate to the concept of overfitting?",
+    "answer": "In modular arithmetic training, grokking is a phenomenon where the small transformer model initially overfits by memorizing the training dataset. After extended training, it suddenly transitions to general calculation and generalizes perfectly.",
+    "entities": ["grokking", "overfitting", "modular arithmetic", "Transformer training", "generalization"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 27,
+    "question": "Why did the American Sunlight Project coin the term 'LLM grooming' in 2025, and what specific aggregator network's behavior was this based on?",
+    "answer": "The ASP coined 'LLM grooming' to describe weaponized mass publication and content duplication to bias LLM outputs. This was based on the Pravda network, a pro-Russia aggregator that placed web content to bias LLM search queries.",
+    "entities": ["LLM grooming", "American Sunlight Project", "Pravda network", "disinformation", "bias"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 28,
+    "question": "In the context of LLM sycophancy, what does it mean for a user to get '1-shotted,' and how does this affect user opinion and confidence?",
+    "answer": "Getting '1-shotted' occurs when a conversational interaction with a sycophantic LLM produces a lasting change in user beliefs. It leads to measurable opinion and confidence shifts comparable to those from human interlocutors or psychedelic experiences.",
+    "entities": ["sycophancy", "1-shotted", "belief shift", "user confidence", "opinion shift"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 29,
+    "question": "Why does the ESMFold model for protein structure prediction run an order of magnitude faster than AlphaFold2, and what database was created using it?",
+    "answer": "ESMFold runs faster because it utilizes embedding-based prediction, which removes the multiple sequence alignment (MSA) requirement and has a lower parameter count. This model was used to predict 772 million structures stored in the ESM Atlas database.",
+    "entities": ["ESMFold", "AlphaFold2", "ESM Atlas", "protein structure prediction", "multiple sequence alignment"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 30,
+    "question": "Explain how the 'Early Fusion' method for constructing multimodal LLMs integrates image and text tokens, and how the image encoder is typically managed to maintain stability.",
+    "answer": "Early fusion projects image vectors from an encoder through a small MLP into the same dimensions as text tokens (image tokens), which are interleaved with text tokens for joint fine-tuning. The image encoder is typically frozen during training to preserve stability.",
+    "entities": ["early fusion", "multimodal", "image tokens", "image encoder", "training stability"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 31,
+    "question": "How does the 'unlabeled large corpus' used in pre-training differ from the dataset used in downstream supervised fine-tuning, and what is a commonly cited example of a pretraining dataset?",
+    "answer": "Pre-training uses a massive, unlabeled, generic corpus (like The Pile) for self-supervised next-token prediction. Supervised fine-tuning uses a smaller, task-specific, labeled dataset to adapt the model to follow instructions or classify labels.",
+    "entities": ["pre-training", "fine-tuning", "unlabeled corpus", "supervised learning", "The Pile"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 32,
+    "question": "In the context of decision trees, what occurs in 'monotonically constrained sparse decision lists' that distinguishes them from general decision trees?",
+    "answer": "A decision list is a sparse, one-sided tree where each internal node has exactly one leaf and one internal node as children (except the bottom node). This sparsity limits expressiveness but allows non-greedy learning and the enforcement of monotonic constraints.",
+    "entities": ["decision list", "decision tree learning", "monotonic constraints", "sparsity", "non-greedy learning"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 33,
+    "question": "How does the 'bagging' ensemble method construct multiple decision trees, and how are their individual predictions combined for classification?",
+    "answer": "Bagging builds trees independently by repeatedly resampling the training dataset with replacement (bootstrapping). For classification, their individual predictions are combined via majority voting to generate a consensus output.",
+    "entities": ["bagging", "bootstrap aggregation", "decision tree", "resampling", "majority voting"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 34,
+    "question": "What makes the conditional inference tree approach unbiased in predictor selection, and why does it not require pruning?",
+    "answer": "Conditional inference trees use statistical non-parametric tests as splitting criteria rather than information metrics. Since these tests are corrected for multiple testing to control overfitting, they result in unbiased predictor selection and do not require post-hoc pruning.",
+    "entities": ["conditional inference trees", "predictor selection", "non-parametric tests", "overfitting", "pruning"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 35,
+    "question": "Why does the Gini impurity metric reach its minimum value of zero in CART classification trees, and what does this minimum represent?",
+    "answer": "Gini impurity calculates $1 - \\sum p_i^2$, which measures the probability of mislabeling. It reaches its minimum of zero when all cases in a node fall into a single target category ($p_i = 1$), representing a perfectly pure or homogeneous node.",
+    "entities": ["Gini impurity", "CART", "classification tree", "homogeneity", "mislabeled probability"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 36,
+    "question": "Explain how the 'Rotation Forest' ensemble technique combines principal component analysis (PCA) with decision trees during training.",
+    "answer": "Rotation Forest trains an ensemble of decision trees. For each tree, principal component analysis (PCA) is first applied to a random subset of the input features to rotate the feature space, and the tree is then trained on these rotated features.",
+    "entities": ["Rotation Forest", "Principal Component Analysis", "decision tree", "ensemble methods", "feature rotation"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 37,
+    "question": "How does the 'Inverse Cloze Task' pre-training strategy align with the training needs of dense retrieval models?",
+    "answer": "ICT requires a model to predict a masked text span from its surrounding document context. This maps queries (the masked span) and parent documents (the context) to nearby vector representations in a shared space, aligning with dense retriever matching.",
+    "entities": ["Inverse Cloze Task", "dense retrieval", "pre-training", "vector space", "query-document mapping"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 38,
+    "question": "Why does the addition of an overlap parameter in fixed-length chunking help maintain semantic context across document boundaries?",
+    "answer": "Fixed-length chunking splits text at hard limit thresholds. Adding an overlap repeats the end tokens of a preceding chunk at the start of the next, preventing sentences or local semantic context from being split and lost across boundaries.",
+    "entities": ["chunking strategy", "fixed-length chunking", "overlap parameter", "semantic context", "retrieval"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 39,
+    "question": "How do file format-based chunking libraries like LangChain or Unstructured handle HTML documents differently than plain text files to preserve tabular data?",
+    "answer": "Format-based chunking parses the HTML tags to keep table structures like `<table>` tags intact within single chunks, rather than splitting content at arbitrary limits which would break up and corrupt tabular data rows and columns.",
+    "entities": ["file format-based chunking", "LangChain", "Unstructured", "HTML documents", "tabular data"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 40,
+    "question": "What is the difference between 'saliency maps' and 'saliency rollout' (attention rollout) when interpreting vision transformers (ViT)?",
+    "answer": "Saliency maps plot raw attention scores for a specific head and layer as a heatmap. Saliency rollout (attention rollout) is a recursive algorithm that combines attention scores across all layers by calculating the dot product of successive maps.",
+    "entities": ["saliency maps", "attention rollout", "vision transformers", "interpretability", "attention scores"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 41,
+    "question": "How does Class-Discriminative Attention Maps (CDAM) adapt CNN-style GradCAM to vision transformers for interpretability?",
+    "answer": "CDAM combines visual attention maps with gradients calculated with respect to the class `[CLS]` token. This replicates the class-discriminative localization of GradCAM by back-propagating gradients back to the outputs of the final attention layer.",
+    "entities": ["Class-Discriminative Attention Maps", "GradCAM", "vision transformers", "interpretability", "[CLS] token"],
+    "type": "multi-hop",
+    "difficulty": "hard"
+  },
+  {
+    "id": 42,
+    "question": "How do the roles of the generator and discriminator networks in a GAN change during training, and what specific neural network types are typically used for each in image generation?",
+    "answer": "The generator learns to map latent space to data distributions to fool the discriminator, while the discriminator improves at distinguishing real from generated data. For images, the generator is typically a deconvolutional network, and the discriminator is a convolutional network.",
+    "entities": ["Generative Adversarial Network", "generator", "discriminator", "deconvolutional neural network", "convolutional neural network"],
+    "type": "multi-hop",
+    "difficulty": "medium"
+  },
+  {
+    "id": 43,
+    "question": "What are the two model sizes at which BERT was originally implemented in the English language?",
+    "answer": "BERTBASE (110 million parameters) and BERTLARGE (340 million parameters).",
+    "entities": ["BERT", "model sizes", "parameters", "BERTBASE", "BERTLARGE"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 44,
+    "question": "Under what open-source license was the Llama 1 inference code publicly released?",
+    "answer": "GPLv3 license.",
+    "entities": ["LLaMA 1", "inference code", "open-source license", "GPLv3"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 45,
+    "question": "What does the 'Ġ' character represent in the tokenizers of models like RoBERTa and GPT?",
+    "answer": "A preceding whitespace.",
+    "entities": ["RoBERTa", "Ġ", "tokenization", "preceding whitespace", "GPT"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 46,
+    "question": "According to the original Transformer paper, what value was chosen for the free parameter $N$ in the positional encoding function?",
+    "answer": "10000.",
+    "entities": ["Transformer", "positional encoding", "free parameter", "N"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 47,
+    "question": "What was the estimated cost to train BERTBASE on 4 cloud TPUs over a period of 4 days?",
+    "answer": "500 USD.",
+    "entities": ["BERTBASE", "training cost", "TPU", "estimated cost"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 48,
+    "question": "Which specific algorithm did Breiman et al. introduce in 1984 as an umbrella term for classification and regression tree analysis?",
+    "answer": "CART (Classification And Regression Tree).",
+    "entities": ["CART", "Breiman", "classification tree", "regression tree", "1984"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 49,
+    "question": "What is the primary floating-point format used for vector representation in FAISS?",
+    "answer": "FP32.",
+    "entities": ["FAISS", "floating-point format", "FP32", "vector representation"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 50,
+    "question": "In the context of LLM quantization, what adaptation method can be used to fine-tune quantized models?",
+    "answer": "Low-rank adaptation (LoRA).",
+    "entities": ["quantization", "fine-tuning", "low-rank adaptation", "LLMs"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 51,
+    "question": "What name did Meta AI give to the AI assistant built on the Llama model?",
+    "answer": "Meta AI.",
+    "entities": ["LLaMA", "Meta AI", "AI assistant", "Llama 3"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 52,
+    "question": "In RAG evaluation, what are two popular benchmarks designed to test retrievability, retrieval accuracy, and generative quality?",
+    "answer": "BEIR and Natural Questions.",
+    "entities": ["RAG evaluation", "BEIR", "Natural Questions", "benchmarks", "retrievability"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 53,
+    "question": "What is the name of the C++ implementation of Llama released by Georgi Gerganov on March 10, 2023?",
+    "answer": "llama.cpp.",
+    "entities": ["Georgi Gerganov", "llama.cpp", "C++", "open-source"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 54,
+    "question": "Who originally popularized and developed the logistic regression model as a general statistical model starting in 1944?",
+    "answer": "Joseph Berkson.",
+    "entities": ["logistic regression", "Joseph Berkson", "1944", "logit"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 55,
+    "question": "What is the name of the open-source tool created by Justine Tunney that bundles llama.cpp with the model into a single executable file?",
+    "answer": "llamafile.",
+    "entities": ["Justine Tunney", "llamafile", "llama.cpp", "executable"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 56,
+    "question": "Which neural network architecture was developed in 2018 as a bi-directional LSTM that produces contextualized word embeddings, prior to BERT?",
+    "answer": "ELMo.",
+    "entities": ["ELMo", "bi-directional LSTM", "contextualized embeddings", "2018"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 57,
+    "question": "In the context of decision trees, what metric is defined as True Positives (TP) minus False Positives (FP)?",
+    "answer": "Estimate of Positive Correctness.",
+    "entities": ["Decision Tree", "Estimate of Positive Correctness", "True Positives", "False Positives"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 58,
+    "question": "What biodiversity index does Gini impurity correspond to in ecological research?",
+    "answer": "Gini-Simpson Index.",
+    "entities": ["Gini impurity", "CART", "Gini-Simpson Index", "biodiversity"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 59,
+    "question": "What is the name of the 671-billion-parameter open-weight reasoning model released by DeepSeek in January 2025?",
+    "answer": "DeepSeek R1.",
+    "entities": ["DeepSeek R1", "reasoning model", "671-billion-parameter", "open-weight"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  },
+  {
+    "id": 60,
+    "question": "What is the name of the training recipe based on Llama 7B released by Stanford University that uses 'Self-Instruct' tuning?",
+    "answer": "Alpaca.",
+    "entities": ["Stanford University", "Alpaca", "Llama 7B", "Self-Instruct"],
+    "type": "single-hop",
+    "difficulty": "easy"
+  }
+]

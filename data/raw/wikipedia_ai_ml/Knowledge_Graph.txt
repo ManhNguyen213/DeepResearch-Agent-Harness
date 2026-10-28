@@ -1,0 +1,13 @@
+A knowledge graph is a knowledge base that uses a graph-structured data model.
+Knowledge Graph may also refer to:
+
+Knowledge Graph (Google), a knowledge graph that powers the Google search engine and other services
+Bing Knowledge Graph or Satori, used by the Bing search engine
+LinkedIn Knowledge Graph (LKG), a knowledge base for LinkedIn
+
+See also
+Conceptual graph
+Graph database
+Knowledge base
+Knowledge engine (disambiguation)
+Social graph, such as Facebook's "entity graph"
