@@ -1,0 +1,49 @@
+[project]
+name = "deep-research-agent-harness"
+version = "0.1.0"
+description = "Agentic Harness with Self-Evolving 3-Tier Cognitive Memory for Autonomous Deep Research (GR2)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.0",
+    "python-dotenv>=1.0.1",
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "google-genai>=1.0.0",
+    "mcp[cli]>=1.2.0",
+    "qdrant-client>=1.11.0",
+    "rank-bm25>=0.2.2",
+    "langfuse>=2.50.0",
+    "chainlit>=1.3.0",
+    "httpx>=0.27.0",
+    "truststore>=0.10.0",
+    "sentence-transformers>=6.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.uv]
+system-certs = true
+
