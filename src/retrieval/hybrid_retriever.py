@@ -11,6 +11,7 @@ Design Rationale:
     Verification Gate later checks deterministically against ``get_chunk_by_id``.
 """
 
+import hashlib
 import json
 import re
 import uuid
@@ -114,13 +115,50 @@ class HybridRetriever:
     def _point_id(chunk_id: str) -> str:
         return str(uuid.uuid5(uuid.NAMESPACE_URL, chunk_id))
 
+    def _content_hash(self, chunk_id: str) -> str:
+        return hashlib.sha1(self._chunks[chunk_id].content.encode("utf-8")).hexdigest()
+
+    def _index_is_current(self) -> bool:
+        """True if the persisted collection matches the corpus exactly (ids, content, vector size)."""
+        info = self._qdrant.get_collection(self.COLLECTION)
+        if getattr(info.config.params.vectors, "size", None) != self._embedder.dim:
+            return False
+        if (info.points_count or 0) != len(self._ids):
+            return False
+        stored: dict[str, str | None] = {}
+        offset = None
+        while True:
+            points, offset = self._qdrant.scroll(
+                self.COLLECTION, limit=256, offset=offset, with_payload=True, with_vectors=False
+            )
+            for p in points:
+                payload = p.payload or {}
+                cid = str(payload.get("chunk_id", ""))
+                stored[cid] = payload.get("content_hash")
+            if offset is None:
+                break
+
+        expected = {i: self._content_hash(i) for i in self._ids}
+        if set(stored) != set(expected):
+            return False
+
+        # Backfill content_hash for legacy collections that have matching chunk_ids but no hash yet
+        missing_hashes = [cid for cid, h in stored.items() if h is None]
+        if missing_hashes:
+            for cid in missing_hashes:
+                self._qdrant.set_payload(
+                    collection_name=self.COLLECTION,
+                    payload={"content_hash": expected[cid]},
+                    points=[self._point_id(cid)],
+                )
+                stored[cid] = expected[cid]
+
+        return stored == expected
+
     def _index_dense(self) -> None:
         """(Re)build the dense index unless a persisted collection already matches the corpus."""
         if self._qdrant.collection_exists(self.COLLECTION):
-            info = self._qdrant.get_collection(self.COLLECTION)
-            vectors = info.config.params.vectors
-            same_dim = getattr(vectors, "size", None) == self._embedder.dim
-            if same_dim and (info.points_count or 0) == len(self._ids):
+            if self._index_is_current():
                 return
             self._qdrant.delete_collection(self.COLLECTION)
         self._qdrant.create_collection(
@@ -134,7 +172,11 @@ class HybridRetriever:
             self._qdrant.upsert(
                 collection_name=self.COLLECTION,
                 points=[
-                    qm.PointStruct(id=self._point_id(i), vector=v, payload={"chunk_id": i})
+                    qm.PointStruct(
+                        id=self._point_id(i),
+                        vector=v,
+                        payload={"chunk_id": i, "content_hash": self._content_hash(i)},
+                    )
                     for i, v in zip(ids, vectors, strict=True)
                 ],
             )

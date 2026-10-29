@@ -209,3 +209,14 @@ def test_dense_index_persisted_and_reused(tmp_path: Path) -> None:
     reused = HybridRetriever(chunks, client, Boom(dim=64))
     assert reused.search("FPT", top_k=1)
     client.close()
+
+
+def test_dense_index_rebuilt_when_content_changes_with_same_count(tmp_path: Path) -> None:
+    chunks = load_chunks_from_dir(CORPUS_DIR)
+    client = QdrantClient(path=str(tmp_path / "q"))
+    HybridRetriever(chunks, client, HashingEmbedder(dim=64))
+
+    edited = [chunks[0].model_copy(update={"content": "completely different text"}), *chunks[1:]]
+    retriever = HybridRetriever(edited, client, HashingEmbedder(dim=64))
+    assert retriever.search("completely different text", top_k=1)[0].chunk_id == chunks[0].chunk_id
+    client.close()

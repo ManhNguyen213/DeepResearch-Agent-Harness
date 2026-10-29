@@ -1,4 +1,4 @@
----
+﻿---
 name: mcp-server-inspector
 description: >-
   Use this skill when the user wants to test, inspect, or validate the FastMCP
@@ -15,7 +15,7 @@ Use this skill to verify that `src/mcp_servers/rag_server.py` and `src/mcp_serve
 1. **Automated Smoke Test (Headless):**
    Run the MCP tool registration and invocation tests via `pytest`:
    ```powershell
-   uv run pytest tests/test_schemas_and_memory.py -k "mcp" -v
+   uv run pytest tests/test_phase1_memory_and_mcp.py -v
    ```
 2. **Interactive MCP Inspector Web UI (Optional when requested by user):**
    Launch the MCP Inspector against either server:
@@ -26,3 +26,4 @@ Use this skill to verify that `src/mcp_servers/rag_server.py` and `src/mcp_serve
    ```powershell
    npx @modelcontextprotocol/inspector uv run python -m src.mcp_servers.rag_server
    ```
+

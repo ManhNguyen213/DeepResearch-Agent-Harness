@@ -39,6 +39,7 @@ def main() -> None:
     """Run the ablation and print a table plus per-type breakdown."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--top-k", type=int, default=5)
+    parser.add_argument("--rerank", action="store_true", help="Include Cross-Encoder rerank row")
     parser.add_argument("--no-rerank", action="store_true")
     args = parser.parse_args()
 
@@ -47,8 +48,11 @@ def main() -> None:
     qdrant_path = settings.qdrant_local_path / "documents"
     qdrant_path.mkdir(parents=True, exist_ok=True)
     reranker = None
-    if settings.reranker_model and not args.no_rerank:
-        reranker = CrossEncoderReranker(settings.reranker_model)
+    rerank_model = settings.reranker_model or (
+        "cross-encoder/ms-marco-MiniLM-L-6-v2" if args.rerank else None
+    )
+    if rerank_model and not args.no_rerank:
+        reranker = CrossEncoderReranker(rerank_model)
     retriever = HybridRetriever(
         chunks, QdrantClient(path=str(qdrant_path)), get_embedder(settings), reranker=reranker
     )

@@ -75,8 +75,8 @@ class HarnessSettings(BaseSettings):
         description="Directory of raw .txt documents consumed by the ingestion CLI",
     )
     reranker_model: str | None = Field(
-        default="cross-encoder/ms-marco-MiniLM-L-6-v2",
-        description="Cross-Encoder model for reranking; empty/None disables reranking",
+        default=None,
+        description="Optional Cross-Encoder model (e.g., 'cross-encoder/ms-marco-MiniLM-L-6-v2'); None disables reranking",
     )
 
     # Harness & Context Controller Parameters

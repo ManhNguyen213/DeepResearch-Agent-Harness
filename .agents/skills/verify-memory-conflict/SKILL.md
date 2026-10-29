@@ -1,4 +1,4 @@
----
+﻿---
 name: verify-memory-conflict
 description: >-
   Use this skill when the user wants to test, verify, or debug the Temporal
@@ -17,9 +17,10 @@ This skill validates two core research contributions of the GR2 project:
 
 1. Run the memory and verification test suite using `uv`:
    ```powershell
-   uv run pytest tests/test_schemas_and_memory.py -v
+   uv run pytest tests/test_schemas_and_memory.py tests/test_phase1_memory_and_mcp.py -v
    ```
 2. Verify in the test output that:
    - Historical records remain queryable with `status == "SUPERSEDED"` and `valid_to == T_new`.
    - Active queries only return `status == "ACTIVE"` records by default.
    - Hallucinated `source_chunk_id` entries raise/return verification failure and are not persisted.
+
