@@ -75,3 +75,14 @@ class StructuredEvidenceCard(BaseModel):
         ge=0,
         description="Estimated token size of this compact evidence card",
     )
+    degraded: bool = Field(
+        default=False,
+        description=(
+            "True when the card was produced by the offline heuristic fallback instead of the LLM; "
+            "its claims carry a low confidence_score so the Verification Gate rejects them"
+        ),
+    )
+    llm_model: str | None = Field(
+        default=None,
+        description="Model that actually produced this card (None for heuristic fallback cards)",
+    )

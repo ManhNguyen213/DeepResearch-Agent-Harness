@@ -10,4 +10,4 @@
 * When `current_tokens >= token_budget_limit * compaction_threshold` (default `0.70`), the `Auto-Compactor` must compress historical reasoning steps and intermediate tool traces into a concise `StateSnapshot` while strictly preserving all verified `source_chunk_id` citations and active hypotheses.
 
 ## 3. State Schema Discipline
-* Define LangGraph state using `Pydantic v2` (`BaseModel`) or `TypedDict` with explicit reducer annotations (`Annotated[list[...], operator.add]`) so parallel sub-agent outputs merge deterministically without race conditions.
+* Define LangGraph state using `Pydantic v2` (`BaseModel`) or `TypedDict` with explicit reducer annotations (such as `Annotated[list[StructuredEvidenceCard], merge_or_clear_evidence_cards]`) so parallel `Send` sub-agent outputs merge deterministically by `sub_query_id` without race conditions and can be cleared cleanly via `CLEAR_CARDS_SENTINEL` during Auto-Compaction.

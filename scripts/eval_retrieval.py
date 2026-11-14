@@ -17,7 +17,7 @@ from pathlib import Path
 from qdrant_client import QdrantClient
 
 from src.config import get_settings
-from src.memory.embeddings import get_embedder
+from src.memory.embeddings import get_shared_embedder
 from src.retrieval.hybrid_retriever import (
     CrossEncoderReranker,
     HybridRetriever,
@@ -54,7 +54,10 @@ def main() -> None:
     if rerank_model and not args.no_rerank:
         reranker = CrossEncoderReranker(rerank_model)
     retriever = HybridRetriever(
-        chunks, QdrantClient(path=str(qdrant_path)), get_embedder(settings), reranker=reranker
+        chunks,
+        QdrantClient(path=str(qdrant_path)),
+        get_shared_embedder(settings),
+        reranker=reranker,
     )
 
     questions = json.loads(DATASET.read_text("utf-8"))

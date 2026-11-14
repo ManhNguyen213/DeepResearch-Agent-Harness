@@ -11,11 +11,13 @@ Design Rationale:
     Gate (Phase 3) has approved a claim; the server itself enforces schema validity.
 """
 
+import threading
+
 from mcp.server.fastmcp import FastMCP
 from qdrant_client import QdrantClient
 
 from src.config import get_settings
-from src.memory.embeddings import get_embedder
+from src.memory.embeddings import get_shared_embedder
 from src.memory.episodic_store import EpisodicProceduralStore
 from src.memory.temporal_store import TemporalSemanticStore
 from src.schemas.memory import EpisodicLogRecord, TemporalFactRecord
@@ -23,32 +25,38 @@ from src.schemas.memory import EpisodicLogRecord, TemporalFactRecord
 mcp = FastMCP("DeepResearch-CognitiveMemory-Server")
 _store: TemporalSemanticStore | None = None
 _episodic: EpisodicProceduralStore | None = None
+# Guards the lazy singletons: parallel sub-agents may hit them for the first time concurrently.
+_init_lock = threading.Lock()
 
 
 def get_memory_store() -> TemporalSemanticStore:
-    """Lazy-initialize the TemporalSemanticStore singleton (SQLite + Qdrant)."""
+    """Lazy-initialize the TemporalSemanticStore singleton (SQLite + Qdrant), thread-safely."""
     global _store
     if _store is None:
-        settings = get_settings()
-        if settings.qdrant_url:
-            client = QdrantClient(url=settings.qdrant_url, api_key=settings.qdrant_api_key)
-        else:
-            path = settings.qdrant_local_path / "semantic_memory"
-            path.mkdir(parents=True, exist_ok=True)
-            client = QdrantClient(path=str(path))
-        _store = TemporalSemanticStore(
-            db_path=settings.sqlite_db_path,
-            qdrant_client=client,
-            embedder=get_embedder(settings),
-        )
+        with _init_lock:
+            if _store is None:
+                settings = get_settings()
+                if settings.qdrant_url:
+                    client = QdrantClient(url=settings.qdrant_url, api_key=settings.qdrant_api_key)
+                else:
+                    path = settings.qdrant_local_path / "semantic_memory"
+                    path.mkdir(parents=True, exist_ok=True)
+                    client = QdrantClient(path=str(path))
+                _store = TemporalSemanticStore(
+                    db_path=settings.sqlite_db_path,
+                    qdrant_client=client,
+                    embedder=get_shared_embedder(settings),
+                )
     return _store
 
 
 def get_episodic_store() -> EpisodicProceduralStore:
-    """Lazy-initialize the EpisodicProceduralStore singleton."""
+    """Lazy-initialize the EpisodicProceduralStore singleton, thread-safely."""
     global _episodic
     if _episodic is None:
-        _episodic = EpisodicProceduralStore(db_path=get_settings().sqlite_db_path)
+        with _init_lock:
+            if _episodic is None:
+                _episodic = EpisodicProceduralStore(db_path=get_settings().sqlite_db_path)
     return _episodic
 
 

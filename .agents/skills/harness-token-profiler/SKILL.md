@@ -14,8 +14,8 @@ This skill checks the **Context & Budget Controller** (`src/harness/compactor.py
 
 ## Execution Steps
 
-1. Run the token budget and compaction unit tests:
+1. Run the token budget, sub-agent isolation, and compaction unit tests:
    ```powershell
-   uv run pytest tests/test_schemas_and_memory.py -k "compaction or budget" -v
+   uv run --no-sync pytest tests/test_schemas_and_memory.py tests/test_phase2_harness.py -k "compaction or budget or isolation" -v
    ```
 2. Inspect the pre-compaction vs. post-compaction token counts and ensure all `verified_citations` remain intact after compaction.

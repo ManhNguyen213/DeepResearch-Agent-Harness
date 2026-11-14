@@ -20,8 +20,17 @@ class HarnessSettings(BaseSettings):
     # LLM Settings
     gemini_api_key: str = Field(default="", description="Google Gemini API Key")
     default_llm_model: str = Field(
-        default="gemini-2.5-flash",
+        default="gemini-3.8-flash",
         description="Default foundation model for planning and sub-agent extraction",
+    )
+    llm_enabled: bool = Field(
+        default=True,
+        description="Master switch: when False the Harness never calls the Gemini API (offline/tests)",
+    )
+    llm_timeout_seconds: float = Field(
+        default=45.0,
+        gt=0,
+        description="Per-call timeout for a single Gemini request before failing over to the next model",
     )
 
     # Observability (Langfuse)

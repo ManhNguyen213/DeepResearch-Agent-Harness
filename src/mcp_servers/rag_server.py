@@ -10,11 +10,13 @@ Design Rationale:
     importing the module (and listing tools in the MCP Inspector) is cheap.
 """
 
+import threading
+
 from mcp.server.fastmcp import FastMCP
 from qdrant_client import QdrantClient
 
 from src.config import get_settings
-from src.memory.embeddings import get_embedder
+from src.memory.embeddings import get_shared_embedder
 from src.observability.tracing import observe, update_span_io
 from src.retrieval.hybrid_retriever import (
     CrossEncoderReranker,
@@ -24,25 +26,35 @@ from src.retrieval.hybrid_retriever import (
 
 mcp = FastMCP("DeepResearch-HybridRAG-Server")
 _retriever: HybridRetriever | None = None
+_retriever_lock = threading.Lock()
 
 
 def get_retriever() -> HybridRetriever:
-    """Lazy-initialize the HybridRetriever singleton from the configured corpus directory."""
+    """Lazy-initialize the HybridRetriever singleton from the configured corpus directory.
+
+    Thread-safe (double-checked locking): the Harness fans out parallel sub-agents that may all
+    call this for the first time at once, and two local Qdrant clients opening the same
+    storage path concurrently fail on the storage ``.lock`` file.
+    """
     global _retriever
     if _retriever is None:
-        settings = get_settings()
-        chunks = load_chunks_from_dir(settings.rag_corpus_path)
-        qdrant_path = settings.qdrant_local_path / "documents"
-        qdrant_path.mkdir(parents=True, exist_ok=True)
-        reranker = (
-            CrossEncoderReranker(settings.reranker_model) if settings.reranker_model else None
-        )
-        _retriever = HybridRetriever(
-            chunks=chunks,
-            qdrant_client=QdrantClient(path=str(qdrant_path)),
-            embedder=get_embedder(settings),
-            reranker=reranker,
-        )
+        with _retriever_lock:
+            if _retriever is None:
+                settings = get_settings()
+                chunks = load_chunks_from_dir(settings.rag_corpus_path)
+                qdrant_path = settings.qdrant_local_path / "documents"
+                qdrant_path.mkdir(parents=True, exist_ok=True)
+                reranker = (
+                    CrossEncoderReranker(settings.reranker_model)
+                    if settings.reranker_model
+                    else None
+                )
+                _retriever = HybridRetriever(
+                    chunks=chunks,
+                    qdrant_client=QdrantClient(path=str(qdrant_path)),
+                    embedder=get_shared_embedder(settings),
+                    reranker=reranker,
+                )
     return _retriever
 
 

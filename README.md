@@ -9,10 +9,11 @@
 1. **Layer 1 – Interactive UI (`src/ui/`):**
    - Built with **Chainlit** to stream real-time reasoning steps, sub-agent tool traces, token budget utilization, and memory state diffs.
 2. **Layer 2 – Agent Harness Core Runtime (`src/harness/`):**
-   - **Context & Budget Controller (`compactor.py`):** Tracks token usage, injects `Procedural Memory` rules at session start, and performs **Auto-Compaction** into a `StateSnapshot` when Working Memory reaches 70% of the token budget.
-   - **Planner (`planner.py`):** Decomposes complex multi-hop research questions into structured `SubQueryTask` nodes.
-   - **Isolated Sub-agent Workers (`subagent.py`):** Executes **Context Forking** in isolated message buffers to read raw retrieved chunks and returns only compact `StructuredEvidenceCard` objects (~300–500 tokens).
-   - **Verification & Critic Gate (`verifier.py`):** Deterministic `source_chunk_id` check + semantic entailment verification to prevent **Memory Poisoning**.
+   - **Context & Budget Controller (`compactor.py`):** Tracks token usage, injects `Procedural Memory` rules at session start, and performs **Auto-Compaction** into a `StateSnapshot` when Working Memory reaches 70% of the token budget while deterministically preserving 100% of `preserved_citations`.
+   - **Planner (`planner.py`):** Pre-checks `TemporalSemanticStore` for existing facts and decomposes complex multi-hop research questions into 2–4 structured `SubQueryTask` nodes.
+   - **Isolated Sub-agent Workers (`subagent.py`):** Executes **Context Forking** in parallel (`Send` API) with isolated message buffers to read raw retrieved chunks and returns only compact `StructuredEvidenceCard` objects (~300–500 tokens). Marks offline/fallback cards as `degraded=True` (`confidence_score=0.40`) so unverified heuristic claims never poison Long-Term Memory.
+   - **Verification & Critic Gate (`verifier.py`):** Deterministic `source_chunk_id` check + semantic entailment verification (`confidence_score >= 0.80`) to prevent **Memory Poisoning**.
+   - **MCP Tool Gateway & Gemini LLM Gateway (`tools.py`, `llm.py`):** Routes Harness tool calls through standardized MCP interfaces and wraps the Gemini Interactions API (`gemini-3.8-flash` with automatic failover and `LLM_ENABLED` hermetic test control).
    - **Orchestrator (`graph.py`):** Explicit cyclic control flow built on **LangGraph (`StateGraph`)**.
 3. **Layer 3 – MCP Tools & 3-Tier Cognitive Memory Engine (`src/memory/` & `src/mcp_servers/`):**
    - **Tier 1 (Working Memory):** Active session state, scratchpad, and hypotheses.

@@ -1,11 +1,33 @@
 """Pydantic v2 schemas for the LangGraph Agent Harness State and Working Memory."""
 
-import operator
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.schemas.evidence import EvidenceClaim, StructuredEvidenceCard
+
+CLEAR_CARDS_SENTINEL = "__CLEAR_EVIDENCE_CARDS__"
+
+
+def merge_or_clear_evidence_cards(
+    existing: list[StructuredEvidenceCard],
+    update: list[StructuredEvidenceCard] | str,
+) -> list[StructuredEvidenceCard]:
+    """Reducer for ``HarnessState.evidence_cards`` supporting parallel ``Send`` and Auto-Compaction.
+
+    - When ``update`` is ``CLEAR_CARDS_SENTINEL``, clears the list (used by Auto-Compaction after
+      condensing older cards into a ``StateSnapshot``).
+    - When ``update`` is a list of cards (returned by parallel ``IsolatedSubAgentWorker`` nodes),
+      merges cards deterministically by ``sub_query_id`` while preserving insertion order.
+    """
+    if update == CLEAR_CARDS_SENTINEL:
+        return []
+    if not isinstance(update, list):
+        return existing
+    merged: dict[str, StructuredEvidenceCard] = {c.sub_query_id: c for c in existing}
+    for card in update:
+        merged[card.sub_query_id] = card
+    return list(merged.values())
 
 
 class SubQueryTask(BaseModel):
@@ -55,7 +77,7 @@ class HarnessState(BaseModel):
         default_factory=list,
         description="Decomposed sub-tasks produced by the Planner",
     )
-    evidence_cards: Annotated[list[StructuredEvidenceCard], operator.add] = Field(
+    evidence_cards: Annotated[list[StructuredEvidenceCard], merge_or_clear_evidence_cards] = Field(
         default_factory=list,
         description="Compact evidence cards returned by Isolated Sub-agent Workers",
     )

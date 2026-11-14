@@ -88,9 +88,31 @@ class SentenceTransformerEmbedder:
     """
 
     def __init__(self, model_name: str = "BAAI/bge-m3") -> None:
-        from sentence_transformers import SentenceTransformer
+        import os
 
-        self._model = SentenceTransformer(model_name)
+        # Prefer the local cache without any Hub round-trips, but scope the offline flags to this
+        # load only: leaving them set would silently break other Hub downloads in the process
+        # (e.g. enabling the Cross-Encoder reranker later). The flags must be set *before*
+        # sentence_transformers/huggingface_hub are first imported, because they read them then.
+        offline_keys = ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE")
+        saved = {k: os.environ.get(k) for k in offline_keys}
+        for k in offline_keys:
+            os.environ[k] = "1"
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            try:
+                self._model = SentenceTransformer(model_name, local_files_only=True)
+            except OSError:
+                for k in offline_keys:
+                    os.environ[k] = "0"
+                self._model = SentenceTransformer(model_name)
+        finally:
+            for k, v in saved.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
         get_dim = getattr(
             self._model,
             "get_embedding_dimension",
@@ -104,6 +126,9 @@ class SentenceTransformerEmbedder:
             texts, batch_size=16, normalize_embeddings=True, show_progress_bar=False
         )
         return [v.tolist() for v in vectors]
+
+
+_shared_embedder_cache: dict[tuple[str, str, int], Embedder] = {}
 
 
 def get_embedder(settings: HarnessSettings | None = None) -> Embedder:
@@ -120,3 +145,15 @@ def get_embedder(settings: HarnessSettings | None = None) -> Embedder:
             dim=settings.embedding_dim,
         )
     return HashingEmbedder(dim=settings.embedding_dim)
+
+
+def get_shared_embedder(settings: HarnessSettings | None = None) -> Embedder:
+    """Return a cached singleton embedder per (backend, model, dim) so BAAI/bge-m3 loads only once."""
+    cfg = settings or get_settings()
+    model_key = (
+        cfg.local_embedding_model if cfg.embedding_backend == "local" else cfg.embedding_model
+    )
+    cache_key = (cfg.embedding_backend, model_key, cfg.embedding_dim)
+    if cache_key not in _shared_embedder_cache:
+        _shared_embedder_cache[cache_key] = get_embedder(cfg)
+    return _shared_embedder_cache[cache_key]
